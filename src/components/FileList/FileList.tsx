@@ -19,13 +19,17 @@ const FileList: React.FC<FileListProps> = ({files} : FileListProps) => {
     return `${file.device}@${file.path}`;
   }
 
+  const getAvailableFiles = () => {
+    return files.filter(file => file.status === "available")
+  }
+
   const updateCheckAllVisualState = () => {
     if(checkboxAllRef){
       const numChecked = listChecked().length;
       if(numChecked === 0){
         checkboxAllRef.checked = false;
         checkboxAllRef.indeterminate = false;
-      }else if(numChecked < files.length){
+      }else if(numChecked < getAvailableFiles().length){
         checkboxAllRef.checked = true; // Not strictly neccesary, but added to ensure consistent behavior.
         checkboxAllRef.indeterminate = true;
       }else {
@@ -65,19 +69,19 @@ const FileList: React.FC<FileListProps> = ({files} : FileListProps) => {
 
   const toggleAll = (state: boolean) => {
     checkboxRefs.forEach(checkbox => {
-      if(checkbox){
+      if(checkbox && !checkbox.disabled){
         checkbox.checked = state;
       }
     })
   }
 
   const handleCheckAll = () => {
-    if(listChecked().length === files.length){
+    if(listChecked().length === getAvailableFiles().length){
       setChecks({});
       toggleAll(false)
     }else{
       const allFiles: {[key:string]: boolean} = {}
-      files.forEach( file => {
+      getAvailableFiles().forEach( file => {
         allFiles[getFileString(file)] = true;
       }) 
       setChecks(allFiles);
@@ -95,9 +99,9 @@ const FileList: React.FC<FileListProps> = ({files} : FileListProps) => {
 
   return (
     <div className="list">
-      <div>
+      <div className="controls">
         <input type="checkbox"  onChange={handleCheckAll} ref={node => { checkboxAllRef = node; }} id="checkbox-all" value="all"/>
-        <span>Selected: </span>
+        <span className="number-selected-label">Selected {listChecked().length}</span>
         <button onClick={handleDownload}>
           <GetAppIcon />
           Download Selected
@@ -110,14 +114,14 @@ const FileList: React.FC<FileListProps> = ({files} : FileListProps) => {
             <th>Name</th>
             <th>Device</th>
             <th>Path</th>
-            <th>Status</th>
+            <th className="status">Status</th>
           </tr>
         </thead>
         <tbody>
           {files.map(file => {
             return (
               <tr key={file.name} className={checks[getFileString(file)] ? 'selected' : ''}>
-                <td><input type="checkbox" ref={node => { checkboxRefs.push(node); }} onChange={handleCheck} id={file.name} value={getFileString(file)} /></td>
+                <td><input type="checkbox" disabled={file.status !== "available"} ref={node => { checkboxRefs.push(node); }} onChange={handleCheck} id={file.name} value={getFileString(file)} /></td>
                 <td>{file.name}</td>
                 <td>{file.device}</td>
                 <td>{file.path}</td>

@@ -1,8 +1,24 @@
+table {
+    border-collapse:collapse;
+}
+
 th {
     text-align: left;
 }
 
-tr:hover {
+.controls,.controls > * {
+    padding: 10px 15px;
+}
+
+th,td {
+    padding: 10px 15px;
+}
+
+tbody tr,thead {
+    border: 1px solid #ddd;
+}
+
+tr:hover,button:hover {
     background-color: lightgrey;
 }
 
@@ -10,10 +26,30 @@ tr.selected {
     background-color: silver;
 }
 
+th.status {
+    text-align: center;
+}
+
 td.status {
     text-transform: capitalize;
+    text-align: end;
 }
 
 td.status .indicator {
     color: limegreen;
+}
+
+.number-selected-label {
+    padding-right: 50px;
+}
+
+button {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    border-radius: 15px;
+}
+
+.MuiSvgIcon-root {
+    vertical-align: middle;
 }
