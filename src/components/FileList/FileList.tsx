@@ -3,6 +3,7 @@ import './FileList.css';
 import File from '../../types/File'
 import GetAppIcon from '@material-ui/icons/GetApp';
 import { useState, useEffect } from 'react';
+import { FiberManualRecord } from '@material-ui/icons';
 
 interface FileListProps {
   files: File[];
@@ -13,6 +14,10 @@ const FileList: React.FC<FileListProps> = ({files} : FileListProps) => {
   let checkboxRefs: (HTMLInputElement | null)[] = [];
   let checkboxAllRef: HTMLInputElement | null;
   const [checks, setChecks] = useState<{[key:string]: boolean}>({})
+
+  const getFileString = (file: File) => {
+    return `${file.device}@${file.path}`;
+  }
 
   const updateCheckAllVisualState = () => {
     if(checkboxAllRef){
@@ -67,13 +72,13 @@ const FileList: React.FC<FileListProps> = ({files} : FileListProps) => {
   }
 
   const handleCheckAll = () => {
-    if(listChecked().length > 0){
+    if(listChecked().length === files.length){
       setChecks({});
       toggleAll(false)
     }else{
       const allFiles: {[key:string]: boolean} = {}
       files.forEach( file => {
-        allFiles[`${file.device}@${file.path}`] = true;
+        allFiles[getFileString(file)] = true;
       }) 
       setChecks(allFiles);
       toggleAll(true);
@@ -84,7 +89,6 @@ const FileList: React.FC<FileListProps> = ({files} : FileListProps) => {
     const downloadString = listChecked().reduce((acc, cv) => {
       return acc + cv[0] + "\n";
     }, "The following files will be downloaded:\n")
-    console.log("dl", downloadString)
     alert(downloadString);
   }
   
@@ -112,12 +116,15 @@ const FileList: React.FC<FileListProps> = ({files} : FileListProps) => {
         <tbody>
           {files.map(file => {
             return (
-              <tr key={file.name}>
-                <td><input type="checkbox" ref={node => { checkboxRefs.push(node); }} onChange={handleCheck} id={file.name} value={`${file.device}@${file.path}`} /></td>
+              <tr key={file.name} className={checks[getFileString(file)] ? 'selected' : ''}>
+                <td><input type="checkbox" ref={node => { checkboxRefs.push(node); }} onChange={handleCheck} id={file.name} value={getFileString(file)} /></td>
                 <td>{file.name}</td>
                 <td>{file.device}</td>
                 <td>{file.path}</td>
-                <td className="status">{file.status}</td>
+                <td className="status">
+                  {file.status === "available" && <FiberManualRecord  className="indicator"/>}
+                  {file.status}
+                </td>
               </tr>
             )
           })}

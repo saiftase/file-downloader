@@ -2,7 +2,18 @@ th {
     text-align: left;
 }
 
+tr:hover {
+    background-color: lightgrey;
+}
+
+tr.selected {
+    background-color: silver;
+}
+
 td.status {
     text-transform: capitalize;
 }
 
+td.status .indicator {
+    color: limegreen;
+}
