@@ -39,7 +39,7 @@ const FileList: React.FC<FileListProps> = ({files} : FileListProps) => {
     }
   }
 
-  useEffect( () => {
+  useEffect(() => {
     updateCheckAllVisualState();
   })
 
@@ -95,7 +95,6 @@ const FileList: React.FC<FileListProps> = ({files} : FileListProps) => {
     }, "The following files will be downloaded:\n")
     alert(downloadString);
   }
-  
 
   return (
     <div className="list">
